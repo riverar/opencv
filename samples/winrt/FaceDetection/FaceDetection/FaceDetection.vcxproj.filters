@@ -39,14 +39,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FaceDetection_TemporaryKey.pfx" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_core300d.dll" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgcodecs300d.dll" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgproc300d.dll" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_objdetect300d.dll" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_core300.dll" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgcodecs300.dll" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgproc300.dll" />
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_objdetect300.dll" />
+    <None Include="$(OpenCV_Bin)opencv_core300$(DebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_imgproc300$(DebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_features2d300$(DebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_flann300$(DebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_ml300$(DebugSuffix).dll" />
+    <None Include="$(OpenCV_Bin)opencv_objdetect300$(DebugSuffix).dll" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />

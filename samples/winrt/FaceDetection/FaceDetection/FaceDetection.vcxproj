@@ -163,30 +163,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_core300.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_core300d.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgcodecs300.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgcodecs300d.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgproc300.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_imgproc300d.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_objdetect300.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\..\..\opencv\bin\install\WS\8.1\x86\x86\vc12\bin\opencv_objdetect300d.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="FaceDetection_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
