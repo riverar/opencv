@@ -185,7 +185,11 @@ void Regression::init(const std::string& testSuitName, const std::string& ext)
         return;
     }
 
+#ifndef WINRT
     const char *data_path_dir = getenv("OPENCV_TEST_DATA_PATH");
+#else
+    const char *data_path_dir = OPENCV_TEST_DATA_PATH;
+#endif
     const char *path_separator = "/";
 
     if (data_path_dir)
@@ -665,11 +669,13 @@ static int perf_validation_idle_delay_ms = 3000; // 3 sec
 static void loadPerfValidationResults(const std::string& fileName)
 {
     perf_validation_results.clear();
+
+    float value = 0;
+#ifndef WINRT
     std::ifstream infile(fileName.c_str());
     while (!infile.eof())
     {
         std::string name;
-        float value = 0;
         if (!(infile >> value))
         {
             if (infile.eof())
@@ -685,8 +691,29 @@ static void loadPerfValidationResults(const std::string& fileName)
         }
         if (!name.empty() && name[name.size() - 1] == '\r') // CRLF processing on Linux
             name.resize(name.size() - 1);
+#else
+    char name[_MAX_PATH];
+    FILE* infile = fopen(fileName.c_str(), "r");
+
+    if (!infile)
+    {
+        std::cout << "ERROR: Can't load performance validation results from " << fileName << "!" << std::endl;
+        return;
+    }
+
+    while (!feof(infile))
+    {
+        if (!fscanf(infile, "%f;%s\n", &value, name))
+        {
+            std::cout << "ERROR: Can't load performance validation results from " << fileName << "!" << std::endl;
+            return;
+        }
+#endif
         perf_validation_results[name] = value;
     }
+#ifdef WINRT
+    fclose(infile);
+#endif
     std::cout << "Performance validation results loaded from " << fileName << " (" << perf_validation_results.size() << " entries)" << std::endl;
 }
 
@@ -699,14 +726,29 @@ static void savePerfValidationResults()
 {
     if (!perf_validation_results_outfile.empty())
     {
-        std::ofstream outfile((perf_validation_results_directory + perf_validation_results_outfile).c_str());
         std::map<std::string, float>::const_iterator i;
+#ifndef WINRT
+        std::ofstream outfile((perf_validation_results_directory + perf_validation_results_outfile).c_str());
+#else
+        FILE* outfile = fopen((perf_validation_results_directory + perf_validation_results_outfile).c_str(), "w+");
+        if (outfile)
+        {
+#endif
         for (i = perf_validation_results.begin(); i != perf_validation_results.end(); ++i)
         {
+#ifndef WINRT
             outfile << i->second << ';';
             outfile << i->first << std::endl;
+#else
+            fprintf(outfile, "%f;%s\n", i->second, (i->first).c_str());
+#endif
         }
+#ifndef WINRT
         outfile.close();
+#else
+        fclose(outfile);
+        }
+#endif
         std::cout << "Performance validation results saved (" << perf_validation_results.size() << " entries)" << std::endl;
     }
 }
@@ -814,7 +856,12 @@ void TestBase::Init(const std::vector<std::string> & availableImpls,
     param_force_samples = args.get<unsigned int>("perf_force_samples");
     param_write_sanity  = args.has("perf_write_sanity");
     param_verify_sanity = args.has("perf_verify_sanity");
+
+#ifndef WINRT
     test_ipp_check      = !args.has("perf_ipp_check") ? getenv("OPENCV_IPP_CHECK") != NULL : true;
+#else
+    test_ipp_check = false;
+#endif
     param_threads       = args.get<int>("perf_threads");
 #ifdef CV_COLLECT_IMPL_DATA
     param_collect_impl  = args.has("perf_collect_impl");
@@ -881,7 +928,11 @@ void TestBase::Init(const std::vector<std::string> & availableImpls,
 #endif
 
     {
+#ifndef WINRT
         const char* path = getenv("OPENCV_PERF_VALIDATION_DIR");
+#else
+        const char* path = OPENCV_PERF_VALIDATION_DIR;
+#endif
         if (path)
             perf_validation_results_directory = path;
     }
@@ -1185,7 +1236,11 @@ bool TestBase::next()
                         printf("Performance is unstable, it may be a result of overheat problems\n");
                         printf("Idle delay for %d ms... \n", perf_validation_idle_delay_ms);
 #if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
+#ifndef WINRT_8_0
                         Sleep(perf_validation_idle_delay_ms);
+#else
+                        WaitForSingleObjectEx(GetCurrentThread(), perf_validation_idle_delay_ms, FALSE);
+#endif
 #else
                         usleep(perf_validation_idle_delay_ms * 1000);
 #endif
@@ -1635,7 +1690,11 @@ std::string TestBase::getDataPath(const std::string& relativePath)
         throw PerfEarlyExitException();
     }
 
+#ifndef WINRT
     const char *data_path_dir = getenv("OPENCV_TEST_DATA_PATH");
+#else
+    const char *data_path_dir = OPENCV_TEST_DATA_PATH;
+#endif
     const char *path_separator = "/";
 
     std::string path;

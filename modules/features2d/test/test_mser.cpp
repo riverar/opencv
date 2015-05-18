@@ -41,7 +41,9 @@
 //M*/
 
 #include "test_precomp.hpp"
-#include "opencv2/highgui.hpp"
+#ifdef RENDER_MSERS
+  #include "opencv2/highgui.hpp"
+#endif
 
 #include <vector>
 #include <string>

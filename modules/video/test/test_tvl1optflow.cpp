@@ -83,16 +83,24 @@ namespace
     // http://vision.middlebury.edu/flow/data/
     void readOpticalFlowFromFile(Mat_<Point2f>& flow, const string& fileName)
     {
-        ifstream file(fileName.c_str(), ios_base::binary);
-
         float tag;
+        Size size;
+#ifndef WINRT
+        ifstream file(fileName.c_str(), ios_base::binary);
         file.read((char*) &tag, sizeof(float));
+#else
+        FILE* file = fopen(fileName.c_str(), "rb");
+        fread((char*)&tag, 1, sizeof(float), file);
+#endif
         CV_Assert( tag == FLO_TAG_FLOAT );
 
-        Size size;
-
+#ifndef WINRT
         file.read((char*) &size.width, sizeof(int));
         file.read((char*) &size.height, sizeof(int));
+#else
+        fread((char*)&size.width, 1, sizeof(int), file);
+        fread((char*)&size.height, 1, sizeof(int), file);
+#endif
 
         flow.create(size);
 
@@ -101,13 +109,22 @@ namespace
             for (int j = 0; j < flow.cols; ++j)
             {
                 Point2f u;
-
+#ifndef WINRT
                 file.read((char*) &u.x, sizeof(float));
                 file.read((char*) &u.y, sizeof(float));
+#else
+                fread((char*)&u.x, 1, sizeof(float), file);
+                fread((char*)&u.y, 1, sizeof(float), file);
+#endif
 
                 flow(i, j) = u;
             }
         }
+#ifndef WINRT
+        file.close();
+#else
+        fclose(file);
+#endif
     }
 
     bool isFlowCorrect(Point2f u)

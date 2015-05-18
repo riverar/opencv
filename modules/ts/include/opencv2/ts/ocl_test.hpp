@@ -48,7 +48,9 @@
 
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/videoio.hpp"
-#include "opencv2/highgui.hpp"
+#ifndef WINRT
+  #include "opencv2/highgui.hpp"
+#endif
 #include "opencv2/imgproc.hpp"
 #include "opencv2/imgproc/types_c.h"
 #include "opencv2/core/ocl.hpp"

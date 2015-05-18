@@ -696,9 +696,16 @@ TEST(Imgcodecs_Tiff, decode_infinite_rowsperstrip)
     };
 
     const string filename = cv::tempfile(".tiff");
+#ifndef WINRT
     std::ofstream outfile(filename.c_str(), std::ofstream::binary);
     outfile.write(reinterpret_cast<const char *>(sample_data), sizeof sample_data);
     outfile.close();
+#else
+    FILE* outfile = fopen(filename.c_str(), "w+");
+    ASSERT_TRUE(outfile != NULL);
+    fwrite(reinterpret_cast<const char *>(sample_data), sizeof sample_data, 1, outfile);
+    fclose(outfile);
+#endif
 
     EXPECT_NO_THROW(cv::imread(filename, IMREAD_UNCHANGED));
 

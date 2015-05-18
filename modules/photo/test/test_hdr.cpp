@@ -60,22 +60,38 @@ void checkEqual(Mat img0, Mat img1, double threshold, const string& name)
 static vector<float> DEFAULT_VECTOR;
 void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times = DEFAULT_VECTOR)
 {
-    ifstream list_file((path + "list.txt").c_str());
-    ASSERT_TRUE(list_file.is_open());
-    string name;
     float val;
-    while(list_file >> name >> val) {
+    String listPath = path + "list.txt";
+#ifndef WINRT
+    string name;
+    ifstream list_file(listPath.c_str());
+    ASSERT_TRUE(list_file.is_open());
+    while (list_file >> name >> val) {
+#else
+    char* name = (char *) malloc(_MAX_PATH - strlen(path.c_str()));
+    FILE* list_file = fopen(listPath.c_str(), "r");
+    ASSERT_TRUE(list_file != NULL);
+
+    while (fscanf(list_file, "%s %f", name, &val) == 2)
+    {
+#endif
         Mat img = imread(path + name);
         ASSERT_FALSE(img.empty()) << "Could not load input image " << path + name;
         images.push_back(img);
         times.push_back(1 / val);
     }
+#ifndef WINRT
     list_file.close();
+#else
+    free(name);
+    fclose(list_file);
+#endif
 }
 
 void loadResponseCSV(String path, Mat& response)
 {
     response = Mat(256, 1, CV_32FC3);
+#ifndef WINRT
     ifstream resp_file(path.c_str());
     for(int i = 0; i < 256; i++) {
         for(int c = 0; c < 3; c++) {
@@ -84,6 +100,17 @@ void loadResponseCSV(String path, Mat& response)
         }
     }
     resp_file.close();
+#else
+    FILE* resp_file = fopen(path.c_str(), "r");
+    ASSERT_TRUE(resp_file != NULL);
+
+    int i = 0;
+    while (fscanf(resp_file, "%f%*s%f%*s%f%*[; ]", &response.at<Vec3f>(i)[0], &response.at<Vec3f>(i)[1], &response.at<Vec3f>(i)[2]) == 3)
+    {
+        i++;
+    }
+    fclose(resp_file);
+#endif
 }
 
 TEST(Photo_Tonemap, regression)
