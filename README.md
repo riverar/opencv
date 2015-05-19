@@ -1,5 +1,7 @@
 ### OpenCV: Open Source Computer Vision Library
 
+Purpose of this branch is to enable contrib modules for WinRT
+
 [![Gittip](http://img.shields.io/gittip/OpenCV.png)](https://www.gittip.com/OpenCV/)
 
 #### Resources
