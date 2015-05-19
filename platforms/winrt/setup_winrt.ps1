@@ -193,6 +193,39 @@ Function Execute() {
         $shouldBuild = Set-VS12
     }
 
+    # Setting up modules
+    $contrib_modules = @{
+        "adas" = "OFF"
+        "bgsegm" = "OFF"
+        "bioinspired" = "OFF"
+        "ccalib" = "OFF"
+        "cvv" = "OFF"
+        "datasets" = "OFF"
+        "datasettools" = "OFF"
+        "face" = "ON"
+        "latentsvm" = "OFF"
+        "line_descriptor" = "OFF"
+        "matlab" = "OFF"
+        "optflow" = "OFF"
+        "reg" = "OFF"
+        "rgbd" = "OFF"
+        "saliency" = "OFF"
+        "surface_matching" = "OFF"
+        "text" = "OFF"
+        "tracking" = "OFF"
+        "xfeatures2d" = "OFF"
+        "ximgproc" = "OFF"
+        "xobjdetect" = "OFF"
+        "xphoto" = "OFF"
+    }
+
+    $contribModulesCommand = '-D OPENCV_EXTRA_MODULES_PATH=D:\projects\OpenCV\OpenCV_contrib\modules '
+    foreach($module in $contrib_modules.Keys) {
+        if ($contrib_modules[$module] -eq "OFF") {
+            $contribModulesCommand += "-DBUILD_opencv_" + $module + "=OFF "
+        }
+    }
+    
     foreach($plat in $platforms) {
         # Set proper platform name.
         $platName = ""
@@ -243,7 +276,8 @@ Function Execute() {
                 Push-Location -Path $path
 
                 L "Generating project:"
-                L "cmake -G $genName -DCMAKE_SYSTEM_NAME:String=$platName -DCMAKE_SYSTEM_VERSION:String=$vers -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=$arch -DCMAKE_INSTALL_PREFIX:PATH=$installPath $SRC"
+                L "cmake -G $genName -DCMAKE_SYSTEM_NAME:String=$platName -DCMAKE_SYSTEM_VERSION:String=$vers -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=$arch -DCMAKE_INSTALL_PREFIX:PATH=$installPath $contribModulesCommand $SRC"
+                # cmake -G $genName -DCMAKE_SYSTEM_NAME:String=$platName -DCMAKE_SYSTEM_VERSION:String=$vers -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=$arch -DCMAKE_INSTALL_PREFIX:PATH=$installPath $contribModulesCommand $SRC
                 cmake -G $genName -DCMAKE_SYSTEM_NAME:String=$platName -DCMAKE_SYSTEM_VERSION:String=$vers -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=$arch -DCMAKE_INSTALL_PREFIX:PATH=$installPath $SRC
                 L "-----------------------------------------------"
 
